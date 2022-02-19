@@ -1,0 +1,42 @@
+<div class="p-5 mb-4 bg-light rounded-3">
+  <div class="fw-bold">
+      <h5 class="lead">HELLO {{ machine.ip }} 
+        {% if machine.containers|length > 0 %}
+        <mark class="bg-secondary text-white fw-bold">TAKEN</mark>
+        {% else %}
+        <mark class="bg-success text-white fw-bold">FREE</mark>
+        {% endif %}
+      </h5>
+      
+      <p class="text mb-0 pb-0"><mark class="bg-info">CPU</mark> {{ machine.processor.name }}</p>
+      <p class="text m-0 p-0"><b>Cores:</b> {{ machine.processor.cores }}</p>
+      <p class="text m-0 p-0"><b>Arch:</b> {{ machine.processor.architecture }}</p>
+      <p></p>
+      <p class="text"><mark class="bg-info">RAM</mark> {{ machine.ram.free }}/{{ machine.ram.total }}</p>
+      <!-- <div class="header" id="{{ machine.ip }}">
+        <h5 class="mb-0">
+          <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+            
+          </button>
+        </h5>
+      </div> -->
+      <div class="fw-normal">
+        <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#ip{{ machine.ip | replace(".", "") }}" aria-expanded="false" aria-controls="multiCollapseExample2">
+          {{ machine.containers|length }} container{% if machine.containers|length != 1%}s{% endif %} running
+        </button>
+      </div>
+      <div class="collapse multi-collapse" id="ip{{ machine.ip | replace(".", "") }}">
+        {% for container in machine.containers %}
+        <div class="container">
+        <p class="p-0">{{ container.name }}</p> 
+        <p class="p-0 blockquote-footer">up for {{ container.uptime / 3600 }} hours</p>
+        <p class="p-0 blockquote-footer">{{ container.tag }}</p>
+         <hr> 
+        </div>
+        {% endfor %}
+      </div>
+      
+      
+
+  </div>
+</div>

@@ -1,0 +1,9 @@
+- hosts: all
+  become: yes
+
+  tasks:
+    - name: list docker images
+      command: docker container ls
+      register: images
+
+    - debug: msg="{{ images.stdout }}"
