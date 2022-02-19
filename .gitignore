@@ -4,6 +4,7 @@ __pycache__/
 .DS_Store
 *$py.class
 state.json
+hosts
 
 # C extensions
 *.so
