@@ -3,9 +3,15 @@ from opservatory.models import Fleet, Machine
 from opservatory.state.repository import StateRepository
 
 
-def request_statuses(comm: InfrastructureCommunicator) -> Fleet:
-    machines = comm.update_machines_info()
-    return Fleet(machines=machines)
+def update_fleet_facts(comm: InfrastructureCommunicator) -> Fleet:
+    return comm.gather_facts()
+
+
+def update_containers_info(comm: InfrastructureCommunicator, repo: StateRepository) -> Fleet:
+    fleet = repo.read_fleet()
+    fleet = comm.update_machines_info(fleet)
+    repo.save_fleet(fleet)
+    return fleet
 
 
 def save_fleet(fleet: Fleet, repo: StateRepository):

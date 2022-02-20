@@ -1,9 +1,13 @@
 from abc import ABC, abstractmethod
 
-from opservatory.models import Machine
+from opservatory.models import Fleet, Machine
 
 
 class InfrastructureCommunicator(ABC):
     @abstractmethod
-    def update_machines_info(self) -> list[Machine]:
+    def gather_facts(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def update_machines_info(self, fleet: Fleet) -> Fleet:
         raise NotImplementedError

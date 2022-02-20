@@ -1,14 +1,20 @@
 from contextlib import contextmanager
+from datetime import datetime
+from functools import lru_cache
+from ipaddress import IPv4Address
+import json
 import os
 from pathlib import Path
 import re
-from typing import Any, cast
+from typing import Any, Optional, cast
+from pydantic import SecretStr
 
 from pytimeparse.timeparse import timeparse
 import ansible_runner
 from ansible_runner import Runner
 from opservatory.infrastructure.communicator import InfrastructureCommunicator
-from opservatory.models import OS, DockerContainer, Machine, Memory, Processor
+from opservatory.infrastructure.models import InventoryMachine
+from opservatory.models import OS, DockerContainer, Fleet, Machine, Memory, Processor
 
 
 MachineInfo = dict[str, Any]
@@ -18,6 +24,7 @@ CURRENT_PATH = Path(os.path.dirname(__file__))
 class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
     def __init__(self) -> None:
         self.runner = ansible_runner
+        self._inventory_path = CURRENT_PATH / "inventory/hosts"
         super().__init__()
 
     def _find_uptime_mention(self, container_info: str) -> str:
@@ -69,10 +76,12 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
             ram=ram,
             processor=processor,
             containers=containers,
-            os=os
+            os=os,
+            updated_at=datetime.now()
         )
 
     def _gathered_facts(self, runner: Runner) -> list[dict[str, Any]]:
+        print(runner.events)
         return [
             result["event_data"]
             for result in runner.events
@@ -87,13 +96,13 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
             if "msg" in result.get("stdout", {}) and result.get("event_data", {}).get("host") == host
         ]
 
-    def _run_playbook(self) -> Runner:
+    def _find_docker_containers(self) -> Runner:
         if not (CURRENT_PATH / "inventory/hosts").exists():
             raise RuntimeError('hosts file is not in opservatory/inventory/hosts')
         runner = self.runner.run(
             private_data_dir=str(CURRENT_PATH / "ansible/tmp"),
             playbook=str(CURRENT_PATH / "ansible/docker_list_playbook.yml"),
-            inventory=str(CURRENT_PATH / "inventory/hosts")
+            inventory=str(self._inventory_path)
         )
         return cast(Runner, runner)
 
@@ -105,14 +114,57 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
                 containers_registred.append(self._parse_container(containers))
         return containers_registred
 
-    def update_machines_info(self) -> list[Machine]:
-        runner = self._run_playbook()
+    def _parse_inventory_machine(self, name: str, inventory_machine: dict[str, Any]) -> InventoryMachine:
+        return InventoryMachine(
+            name=name,
+            ip=inventory_machine['ansible_host'],
+            username=SecretStr(inventory_machine['ansible_user']),
+            password=SecretStr(inventory_machine['ansible_password'])
+        )
 
+    @property
+    def _inventory_machines(self) -> list[InventoryMachine]:
+        inventory_json = self.runner.get_inventory('list', [str(self._inventory_path)])[0]
+        inventory = json.loads(inventory_json)['_meta']['hostvars']
+        return [self._parse_inventory_machine(name, machine) for name, machine in inventory.items()]
+
+    def list_docker_containers(self, host: str) -> list[DockerContainer]:
+        print(self._inventory_machines)
+        runner = self.runner.run(
+            private_data_dir=str(CURRENT_PATH / "ansible/tmp"),
+            playbook=str(CURRENT_PATH / "ansible/docker_list_playbook.yml"),
+            inventory=str(self._inventory_path),
+            limit=host
+        )
+        runner = cast(Runner, runner)
+        return self._parse_containers(host, runner)
+
+    def gather_facts(self):
+        runner = self.runner.run(
+            private_data_dir=str(CURRENT_PATH / "ansible/tmp"),
+            playbook=str(CURRENT_PATH / "ansible/gather_facts.yml"),
+            inventory=str(self._inventory_path)
+        )
+        runner = cast(Runner, runner)
         machines = []
         for facts in self._gathered_facts(runner):
-            host_name = facts["host"]
-            containers = self._parse_containers(host_name, runner)
-            machine = self._parse_machine(facts["res"]["ansible_facts"], containers)
+            machine = self._parse_machine(facts["res"]["ansible_facts"], [])
             machines.append(machine)
+        self.fleet = Fleet(machines=machines)
+        return self.fleet
 
-        return machines
+    def _find_machine_by_ip(self, ip: IPv4Address, fleet: Fleet) -> Optional[Machine]:
+        return fleet.ip2machine.get(ip, None)
+
+    def update_machines_info(self, fleet: Fleet) -> Fleet:
+        for host in self._inventory_machines:
+            machine = self._find_machine_by_ip(host.ip, fleet)
+            print(host.ip, machine)
+            if not machine:
+                continue
+
+            containers = self.list_docker_containers(host.name)
+            machine.containers = containers
+            machine.updated_at = datetime.now()
+
+        return fleet

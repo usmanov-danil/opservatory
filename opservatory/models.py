@@ -38,6 +38,10 @@ class Machine(BaseModel):
 class Fleet(BaseModel):
     machines: list[Machine]
 
+    @property
+    def ip2machine(self) -> dict[IPv4Address, Machine]:
+        return {machine.ip: machine for machine in self.machines}
+
 
 class Config(BaseModel):
     company_name: str
