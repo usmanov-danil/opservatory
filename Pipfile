@@ -13,11 +13,10 @@ uvicorn = "*"
 ansible = "*"
 pytimeparse = "*"
 jinja2 = "*"
-pre-commit = "*"
 
 [dev-packages]
-radon = "*"
 wily = "*"
+pre-commit = "*"
 
 [requires]
 python_version = "3.9"

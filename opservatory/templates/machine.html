@@ -1,6 +1,6 @@
 <div class="p-5 mb-4 bg-light rounded-3">
   <div class="fw-bold">
-      <h5 class="lead">HELLO {{ machine.ip }} 
+      <h5 class="lead">{{ machine.ip }} 
         {% if machine.containers|length > 0 %}
         <mark class="bg-secondary text-white fw-bold">TAKEN</mark>
         {% else %}
@@ -20,6 +20,7 @@
           </button>
         </h5>
       </div> -->
+      <h6 class="text-muted fw-normal">updated at {{ machine.updated_at }}</h6>
       <div class="fw-normal">
         <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#ip{{ machine.ip | replace(".", "") }}" aria-expanded="false" aria-controls="multiCollapseExample2">
           {{ machine.containers|length }} container{% if machine.containers|length != 1%}s{% endif %} running
@@ -35,6 +36,8 @@
         </div>
         {% endfor %}
       </div>
+
+      
       
       
 

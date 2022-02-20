@@ -4,6 +4,17 @@ API for checking docker containers states in a small infrastructure
 
 ## Quick start
 
+Step 1.0  Put Ansible hosts file into inventory
+Step 1.5  Replace company name in config.json
+Step 2.0  Run locally
+
 ```
 uvicorn opservatory.api:app --host 0.0.0.0 --port 5000
+```
+
+or 
+
+```
+docker build -t opservatory .
+docker run -p 5000:5000 opservatory
 ```

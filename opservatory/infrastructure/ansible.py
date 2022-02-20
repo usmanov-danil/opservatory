@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 import os
 from pathlib import Path
 import re
@@ -15,11 +16,14 @@ CURRENT_PATH = Path(os.path.dirname(__file__))
 
 
 class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
+    def __init__(self) -> None:
+        self.runner = ansible_runner
+        super().__init__()
 
     def _find_uptime_mention(self, container_info: str) -> str:
         uptime_mentions = re.findall(r"Up\s\d\s\w+", container_info)
         if not uptime_mentions:
-            return '0 seconds'
+            return "0 seconds"
         return uptime_mentions[-1].replace("Up ", "")
 
     def _parse_uptime_seconds(self, container_info: str) -> int:
@@ -65,7 +69,7 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
             ram=ram,
             processor=processor,
             containers=containers,
-            os=os,
+            os=os
         )
 
     def _gathered_facts(self, runner: Runner) -> list[dict[str, Any]]:
@@ -84,10 +88,12 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
         ]
 
     def _run_playbook(self) -> Runner:
-        runner = ansible_runner.run(
+        if not (CURRENT_PATH / "inventory/hosts").exists():
+            raise RuntimeError('hosts file is not in opservatory/inventory/hosts')
+        runner = self.runner.run(
             private_data_dir=str(CURRENT_PATH / "ansible/tmp"),
             playbook=str(CURRENT_PATH / "ansible/docker_list_playbook.yml"),
-            inventory=str(CURRENT_PATH / "inventory/hosts"),
+            inventory=str(CURRENT_PATH / "inventory/hosts")
         )
         return cast(Runner, runner)
 

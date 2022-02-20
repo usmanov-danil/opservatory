@@ -11,23 +11,20 @@
     <nav class="navbar navbar-default bg-success">
       <div class="navbar-header">
         <div class="container">
-          <h2 class="navbar-brand px-5 pt-3 text-white"><span>EDGE VISION</span> <b>OPS</b>ERVATORY</h2>
+          <h2 class="navbar-brand px-5 pt-3 text-white"><span>{{ company_name|upper }}</span> <b>OPS</b>ERVATORY</h2>
         </div>
       </div>
     </nav>
     
   </head>
   <body class="bg-white">
-   
     <div class="pt-3 container">
-      <div class="p-5 mb-4 bg-light rounded-3">
-        <mark class="bg-dark">TOTAL: {{ machines|length }}</mark>
-      </div>
+      <mark class="bg-dark text-white mb-2">TOTAL: {{ machines|length }}</mark> <mark class="bg-success text-white mb-2">FREE: {{ total_free }}</mark>
     </div>
-    
+
     <div class="pt-3 container">
       <div class="row">
-      {% for machine in machines %}
+      {% for machine in machines|sort(attribute='ip', reverse=true) %}
         
       <div class="col-lg-6">
           {% include 'machine.html' %}

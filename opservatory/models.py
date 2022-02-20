@@ -1,3 +1,4 @@
+from datetime import datetime
 from ipaddress import IPv4Address
 from pydantic import BaseModel
 
@@ -31,7 +32,17 @@ class Machine(BaseModel):
     os: OS
     processor: Processor
     containers: list[DockerContainer]
+    updated_at: datetime = datetime.now()
 
 
 class Fleet(BaseModel):
     machines: list[Machine]
+
+
+class Config(BaseModel):
+    company_name: str
+
+
+class FrontendContext(BaseModel):
+    machines: list[Machine]
+    company_name: str

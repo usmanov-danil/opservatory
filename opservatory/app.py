@@ -1,5 +1,5 @@
 from opservatory.infrastructure.communicator import InfrastructureCommunicator
-from opservatory.models import Fleet
+from opservatory.models import Fleet, Machine
 from opservatory.state.repository import StateRepository
 
 
@@ -14,3 +14,8 @@ def save_fleet(fleet: Fleet, repo: StateRepository):
 
 def get_fleet_state(repo: StateRepository) -> Fleet:
     return repo.read_fleet()
+
+
+def free_machines(repo: StateRepository) -> list[Machine]:
+    machines = repo.read_fleet().machines
+    return list(filter(lambda machine: len(machine.containers) <= 0, machines))
