@@ -9,15 +9,23 @@ class JsonStateRepository(StateRepository):
         self.path = path
         super().__init__()
 
+    def _create_dump_file(self):
+        self.path.open(mode="w")
+
     def save_fleet(self, fleet: Fleet):
         file = self.path.open(mode="w")
         file.write(fleet.json())
+        file.close()
 
     def read_fleet(self) -> Fleet:
         if not self.path.exists():
-            self.path.open(mode="w")
+            self._create_dump_file()
+
         file = self.path.open(mode="r")
+        state = file.read()
+        file.close()
+
         try:
-            return Fleet.parse_raw(file.read())
+            return Fleet.parse_raw(state)
         except ValidationError:
             raise ValueError("State is empty")
