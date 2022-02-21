@@ -81,7 +81,6 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
         )
 
     def _gathered_facts(self, runner: Runner) -> list[dict[str, Any]]:
-        print(runner.events)
         return [
             result["event_data"]
             for result in runner.events
@@ -129,7 +128,6 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
         return [self._parse_inventory_machine(name, machine) for name, machine in inventory.items()]
 
     def list_docker_containers(self, host: str) -> list[DockerContainer]:
-        print(self._inventory_machines)
         runner = self.runner.run(
             private_data_dir=str(CURRENT_PATH / "ansible/tmp"),
             playbook=str(CURRENT_PATH / "ansible/docker_list_playbook.yml"),
@@ -139,7 +137,7 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
         runner = cast(Runner, runner)
         return self._parse_containers(host, runner)
 
-    def gather_facts(self):
+    def gather_facts(self, fleet: Fleet) -> Fleet:
         runner = self.runner.run(
             private_data_dir=str(CURRENT_PATH / "ansible/tmp"),
             playbook=str(CURRENT_PATH / "ansible/gather_facts.yml"),
@@ -150,8 +148,9 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
         for facts in self._gathered_facts(runner):
             machine = self._parse_machine(facts["res"]["ansible_facts"], [])
             machines.append(machine)
-        self.fleet = Fleet(machines=machines)
-        return self.fleet
+            fleet.ip2machine[machine.ip].update_facts(machine)
+
+        return fleet
 
     def _find_machine_by_ip(self, ip: IPv4Address, fleet: Fleet) -> Optional[Machine]:
         return fleet.ip2machine.get(ip, None)
@@ -159,7 +158,6 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
     def update_machines_info(self, fleet: Fleet) -> Fleet:
         for host in self._inventory_machines:
             machine = self._find_machine_by_ip(host.ip, fleet)
-            print(host.ip, machine)
             if not machine:
                 continue
 

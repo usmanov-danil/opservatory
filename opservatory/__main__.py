@@ -1,8 +1,8 @@
-from opservatory.app import request_statuses
+from opservatory.app import update_fleet_facts
 from opservatory.infrastructure.ansible import AnsibleInfrastructureCommunicator
 
 
 comm = AnsibleInfrastructureCommunicator()
 
-for machine in request_statuses(comm).machines:
+for machine in update_fleet_facts(comm).machines:
     print(machine)

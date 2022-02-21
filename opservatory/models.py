@@ -1,3 +1,4 @@
+from __future__ import annotations
 from datetime import datetime
 from ipaddress import IPv4Address
 from pydantic import BaseModel
@@ -33,6 +34,13 @@ class Machine(BaseModel):
     processor: Processor
     containers: list[DockerContainer]
     updated_at: datetime = datetime.now()
+
+    def update_facts(self, updater: Machine):
+        self.ip = updater.ip
+        self.system = updater.system
+        self.ram = updater.ram
+        self.processor = updater.processor
+        self.updated_at = datetime.now()
 
 
 class Fleet(BaseModel):

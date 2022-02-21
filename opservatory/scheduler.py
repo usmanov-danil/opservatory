@@ -20,8 +20,7 @@ def update_fleet():
     print("Updating fleet facts...")
     comm = AnsibleInfrastructureCommunicator()
     repo = JsonStateRepository(path=STATE_DUMP_PATH)
-    fleet = update_fleet_facts(comm)
-    save_fleet(fleet, repo)
+    fleet = update_fleet_facts(comm, repo)
     print("Machines updated:", len(fleet.machines))
 
 

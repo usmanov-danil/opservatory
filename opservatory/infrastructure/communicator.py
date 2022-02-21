@@ -5,7 +5,7 @@ from opservatory.models import Fleet, Machine
 
 class InfrastructureCommunicator(ABC):
     @abstractmethod
-    def gather_facts(self):
+    def gather_facts(self, fleet: Fleet) -> Fleet:
         raise NotImplementedError
 
     @abstractmethod
