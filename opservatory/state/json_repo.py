@@ -28,4 +28,4 @@ class JsonStateRepository(StateRepository):
         try:
             return Fleet.parse_raw(state)
         except ValidationError:
-            raise ValueError("State is empty")
+            return Fleet(machines=[])

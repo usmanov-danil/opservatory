@@ -8,5 +8,6 @@ class StateRepository(ABC):
     def save_fleet(self, fleet: Fleet):
         raise NotImplementedError
 
+    @abstractmethod
     def read_fleet(self) -> Fleet:
         raise NotImplementedError

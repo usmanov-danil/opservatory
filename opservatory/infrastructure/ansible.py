@@ -1,6 +1,4 @@
-from contextlib import contextmanager
 from datetime import datetime
-from functools import lru_cache
 from ipaddress import IPv4Address
 import json
 import os
@@ -40,8 +38,11 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
             return 0
         return int(seconds)
 
-    def _parse_container(self, container_info: str) -> DockerContainer:
+    def _parse_container(self, container_info: str) -> Optional[DockerContainer]:
         info = container_info.split()
+        print('HERE', info)
+        if not info:
+            return
         tag = info[1]
         name = info[-1]
         uptime_value = self._parse_uptime_seconds(container_info)
@@ -110,7 +111,10 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
         for host in self._docker_tasks(runner, host_name):
             docker_engine = host["res"]["msg"].split("\n")[1:]
             for containers in docker_engine:
-                containers_registred.append(self._parse_container(containers))
+                container = self._parse_container(containers)
+                if not container:
+                    continue
+                containers_registred.append(container)
         return containers_registred
 
     def _parse_inventory_machine(self, name: str, inventory_machine: dict[str, Any]) -> InventoryMachine:
