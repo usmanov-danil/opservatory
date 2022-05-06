@@ -29,6 +29,7 @@ class DockerContainer(BaseModel):
 class Machine(BaseModel):
     ip: IPv4Address
     system: str
+    hostname: str
     ram: Memory  # ansible_memory_mb.real.total
     os: OS
     processor: Processor

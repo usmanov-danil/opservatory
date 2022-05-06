@@ -74,6 +74,7 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
         return Machine(
             system=machine_info["ansible_system"],
             ip=machine_info["ansible_default_ipv4"]["address"],
+            hostname=machine_info["ansible_hostname"],
             ram=ram,
             processor=processor,
             containers=containers,
@@ -129,6 +130,7 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
     def _inventory_machines(self) -> list[InventoryMachine]:
         inventory_json = self.runner.get_inventory('list', [str(self._inventory_path)])[0]
         inventory = json.loads(inventory_json)['_meta']['hostvars']
+        print(inventory)
         return [self._parse_inventory_machine(name, machine) for name, machine in inventory.items()]
 
     def list_docker_containers(self, host: str) -> list[DockerContainer]:
@@ -148,10 +150,11 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
             inventory=str(self._inventory_path)
         )
         runner = cast(Runner, runner)
-        machines = []
+        
         for facts in self._gathered_facts(runner):
             machine = self._parse_machine(facts["res"]["ansible_facts"], [])
-            machines.append(machine)
+            if machine not in fleet.machines:
+                fleet.machines.append(machine)
             fleet.ip2machine[machine.ip].update_facts(machine)
 
         return fleet

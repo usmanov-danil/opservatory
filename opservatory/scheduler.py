@@ -25,6 +25,7 @@ def update_fleet():
     fleet = update_fleet_facts(comm, repo)
 
     shutil.rmtree(TEMP_FILES_PATH)
+    TEMP_FILES_PATH.mkdir()
 
     print("Machines updated:", len(fleet.machines))
 
