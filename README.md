@@ -6,7 +6,7 @@ API for checking docker containers states in a small infrastructure
 
 Step 1.0  Put Ansible hosts file into inventory
 
-`opservatory/infrastructure/inventory/ <- file named hosts should be here`
+`opservatory/infrastructure/inventory/` <- file named hosts should be here
 
 Step 1.5  Replace company name in config.json
 Step 2.0  Run locally
