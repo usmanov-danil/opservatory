@@ -1,0 +1,3 @@
+[submodule "opservatory/client"]
+	path = opservatory/client
+	url = git@github.com:Subatiq/opservatory-web.git

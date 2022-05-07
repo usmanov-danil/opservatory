@@ -153,7 +153,7 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
         
         for facts in self._gathered_facts(runner):
             machine = self._parse_machine(facts["res"]["ansible_facts"], [])
-            if machine not in fleet.machines:
+            if machine.ip not in [_machine.ip for _machine in fleet.machines]:
                 fleet.machines.append(machine)
             fleet.ip2machine[machine.ip].update_facts(machine)
 

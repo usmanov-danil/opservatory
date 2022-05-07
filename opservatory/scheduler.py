@@ -1,3 +1,4 @@
+from datetime import datetime
 import logging
 import os
 from pathlib import Path
@@ -14,10 +15,10 @@ sched = BackgroundScheduler()
 
 TEMP_FILES_PATH = Path(os.path.dirname(__file__)) / 'infrastructure' / 'ansible' / 'tmp'
 PROJECT_PATH = Path(os.path.dirname(__file__))
-STATE_DUMP_PATH = PROJECT_PATH / Path('state.json')
+STATE_DUMP_PATH = PROJECT_PATH / 'volumes' / 'state.json'
 
 
-@sched.scheduled_job(id="facts_update", trigger=CronTrigger.from_crontab("*/10 * * * *"))
+@sched.scheduled_job(id="facts_update", trigger=CronTrigger.from_crontab("*/10 * * * *"), next_run_time=datetime.now())  # type: ignore
 def update_fleet():
     print("Updating fleet facts...")
     comm = AnsibleInfrastructureCommunicator()
@@ -30,7 +31,7 @@ def update_fleet():
     print("Machines updated:", len(fleet.machines))
 
 
-@sched.scheduled_job(id="containers_update", trigger=CronTrigger.from_crontab("* * * * *"))
+@sched.scheduled_job(id="containers_update", trigger=CronTrigger.from_crontab("* * * * *"), next_run_time=datetime.now())  # type: ignore
 def update_docker_images():
     print("Updating fleet business state...")
     comm = AnsibleInfrastructureCommunicator()
@@ -39,5 +40,5 @@ def update_docker_images():
     print("Machines updated:", len(fleet.machines))
 
 
-update_fleet()
-update_docker_images()
+# update_fleet()
+# update_docker_images()
