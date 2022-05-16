@@ -1,0 +1,49 @@
+hosts:
+- ip: 192.168.85.115
+  groups: [office]
+- ip: 192.168.85.116
+  groups: [office]
+- ip: 192.168.85.125
+  ssh:
+    username: user
+  groups: [office]
+- ip: 192.168.85.131
+  groups: [office]
+- ip: 192.168.85.139
+  groups: [office]
+- ip: 192.168.85.158
+  ssh:
+    username: user
+  groups: [office]
+- ip: 192.168.85.169
+  groups: [office]
+- ip: 192.168.85.170
+  groups: [office]
+- ip: 192.168.85.172
+  groups: [office]
+- ip: 192.168.85.100
+  groups: [office]
+- ip: 192.168.85.180
+  groups: [office]
+- ip: 192.168.85.30
+  groups: [office]
+- ip: 192.168.85.31
+  groups: [office]
+- ip: 192.168.85.33
+  groups: [office]
+- ip: 192.168.85.34
+  groups: [office]
+- ip: 192.168.85.40
+  groups: [office]
+- ip: 192.168.85.4
+  groups: [office]
+  ssh:
+    username: pi
+
+groups:
+  office:
+    ssh:
+      username: mmcv
+      password: mmcv123!
+
+  

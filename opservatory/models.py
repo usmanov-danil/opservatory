@@ -1,5 +1,6 @@
 from __future__ import annotations
 from datetime import datetime
+from enum import Enum
 from ipaddress import IPv4Address
 from pydantic import BaseModel
 
@@ -26,15 +27,22 @@ class DockerContainer(BaseModel):
     uptime: int
 
 
+class MachineState(str, Enum):
+    UNREACHABLE = "unreachable"
+    FREE = "free"
+    BUSY = "busy"
+    RESERVED = "reserved"
+
+
 class Machine(BaseModel):
     ip: IPv4Address
-    system: str
     hostname: str
     ram: Memory  # ansible_memory_mb.real.total
     os: OS
     processor: Processor
     containers: list[DockerContainer]
     updated_at: datetime = datetime.now()
+    state: MachineState = MachineState.UNREACHABLE
 
     def update_facts(self, updater: Machine):
         self.ip = updater.ip

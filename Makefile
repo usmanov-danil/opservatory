@@ -6,11 +6,11 @@ build:
 
 dev: build
 	echo "Starting dev server..."
-	docker-compose -f docker-compose.dev.yml up;
+	docker-compose -f docker-compose.dev.yml up --build;
 
 back-dev:
 	echo "Starting dev server..."
-	docker-compose -f docker-compose.dev.yml up;
+	docker-compose -f docker-compose.dev.yml up --build;
 
 front-dev: 
 	echo "Starting front-end dev server..."
@@ -19,6 +19,3 @@ front-dev:
 release: build
 	docker tag opservatory $(tag)
 	docker push $(tag)
-
-
-

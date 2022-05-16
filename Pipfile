@@ -6,13 +6,12 @@ name = "pypi"
 [packages]
 fastapi = "*"
 pydantic = "*"
-ansible-runner = "*"
-paramiko = "*"
 apscheduler = "*"
 uvicorn = "*"
-ansible = "*"
 pytimeparse = "*"
 jinja2 = "*"
+kornet = "0.0.18"
+loguru = "*"
 
 [dev-packages]
 wily = "*"

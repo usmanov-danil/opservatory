@@ -1,3 +1,6 @@
 [submodule "opservatory/client"]
 	path = opservatory/client
 	url = git@github.com:Subatiq/opservatory-web.git
+[submodule "marshal"]
+	path = marshal
+	url = git@github.com:subatiq/marshal.git

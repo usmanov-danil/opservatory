@@ -21,7 +21,6 @@ CURRENT_PATH = Path(os.path.dirname(__file__))
 
 class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
     def __init__(self) -> None:
-        self.runner = ansible_runner
         self._inventory_path = CURRENT_PATH / "inventory/hosts"
         super().__init__()
 
@@ -40,7 +39,6 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
 
     def _parse_container(self, container_info: str) -> Optional[DockerContainer]:
         info = container_info.split()
-        print('HERE', info)
         if not info:
             return
         tag = info[1]
@@ -72,7 +70,6 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
         os = self._parse_os(machine_info)
         ram = self._parse_ram(machine_info)
         return Machine(
-            system=machine_info["ansible_system"],
             ip=machine_info["ansible_default_ipv4"]["address"],
             hostname=machine_info["ansible_hostname"],
             ram=ram,
@@ -100,10 +97,12 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
     def _find_docker_containers(self) -> Runner:
         if not (CURRENT_PATH / "inventory/hosts").exists():
             raise RuntimeError('hosts file is not in opservatory/inventory/hosts')
-        runner = self.runner.run(
+        runner = ansible_runner.run(
+            rotate_artifacts=1,
             private_data_dir=str(CURRENT_PATH / "ansible/tmp"),
             playbook=str(CURRENT_PATH / "ansible/docker_list_playbook.yml"),
-            inventory=str(self._inventory_path)
+            inventory=str(self._inventory_path),
+            quiet=True
         )
         return cast(Runner, runner)
 
@@ -128,26 +127,31 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
 
     @property
     def _inventory_machines(self) -> list[InventoryMachine]:
-        inventory_json = self.runner.get_inventory('list', [str(self._inventory_path)])[0]
+        inventory_json = ansible_runner.get_inventory('list', [str(self._inventory_path)])[0]
         inventory = json.loads(inventory_json)['_meta']['hostvars']
         print(inventory)
         return [self._parse_inventory_machine(name, machine) for name, machine in inventory.items()]
 
     def list_docker_containers(self, host: str) -> list[DockerContainer]:
-        runner = self.runner.run(
+        runner = ansible_runner.run(
             private_data_dir=str(CURRENT_PATH / "ansible/tmp"),
+            rotate_artifacts=1,
             playbook=str(CURRENT_PATH / "ansible/docker_list_playbook.yml"),
             inventory=str(self._inventory_path),
-            limit=host
+            limit=host,
+            quiet=True
         )
         runner = cast(Runner, runner)
         return self._parse_containers(host, runner)
 
     def gather_facts(self, fleet: Fleet) -> Fleet:
-        runner = self.runner.run(
+        # TODO: Refactor run calls
+        runner = ansible_runner.run(
             private_data_dir=str(CURRENT_PATH / "ansible/tmp"),
+            rotate_artifacts=1,
             playbook=str(CURRENT_PATH / "ansible/gather_facts.yml"),
-            inventory=str(self._inventory_path)
+            inventory=str(self._inventory_path),
+            quiet=True
         )
         runner = cast(Runner, runner)
         
