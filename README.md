@@ -1,4 +1,4 @@
-# opservatory
+# Opservatory
 
 API for checking docker containers states in a small infrastructure
 
@@ -22,3 +22,7 @@ or
 docker build -t opservatory .
 docker run -p 5000:5000 opservatory
 ```
+
+---
+
+Made by [Subatiq](https://github.com/subatiq) for the team of Edge Vision
