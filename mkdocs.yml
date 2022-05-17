@@ -1,0 +1,13 @@
+site_name: Opservatory
+theme: 
+  logo: brands/logo_white.svg
+  features:
+    - navigation.instant
+    - navigation.sections
+    - content.tabs.link
+  name: material
+  icon: 
+    repo: fontawesome/brands/github
+  palette:
+    scheme: slate
+    primary: deep orange
