@@ -1,7 +1,9 @@
 from __future__ import annotations
+
 from datetime import datetime
 from enum import Enum
 from ipaddress import IPv4Address
+
 from pydantic import BaseModel
 
 

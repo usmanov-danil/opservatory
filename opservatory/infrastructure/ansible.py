@@ -1,19 +1,20 @@
-from datetime import datetime
-from ipaddress import IPv4Address
 import json
 import os
-from pathlib import Path
 import re
+from datetime import datetime
+from ipaddress import IPv4Address
+from pathlib import Path
 from typing import Any, Optional, cast
-from pydantic import SecretStr
 
-from pytimeparse.timeparse import timeparse
 import ansible_runner
 from ansible_runner import Runner
+from pydantic import SecretStr
+from pytimeparse.timeparse import timeparse
+
 from opservatory.infrastructure.communicator import InfrastructureCommunicator
 from opservatory.infrastructure.models import InventoryMachine
-from opservatory.models import OS, DockerContainer, Fleet, Machine, Memory, Processor
-
+from opservatory.models import (OS, DockerContainer, Fleet, Machine, Memory,
+                                Processor)
 
 MachineInfo = dict[str, Any]
 CURRENT_PATH = Path(os.path.dirname(__file__))
@@ -55,8 +56,7 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
 
     def _parse_os(self, machine_info: MachineInfo) -> OS:
         return OS(
-            distribution=machine_info["ansible_distribution"],
-            version=machine_info["ansible_distribution_version"]
+            distribution=machine_info["ansible_distribution"], version=machine_info["ansible_distribution_version"]
         )
 
     def _parse_ram(self, machine_info: MachineInfo) -> Memory:
@@ -76,7 +76,7 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
             processor=processor,
             containers=containers,
             os=os,
-            updated_at=datetime.now()
+            updated_at=datetime.now(),
         )
 
     def _gathered_facts(self, runner: Runner) -> list[dict[str, Any]]:
@@ -96,13 +96,13 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
 
     def _find_docker_containers(self) -> Runner:
         if not (CURRENT_PATH / "inventory/hosts").exists():
-            raise RuntimeError('hosts file is not in opservatory/inventory/hosts')
+            raise RuntimeError("hosts file is not in opservatory/inventory/hosts")
         runner = ansible_runner.run(
             rotate_artifacts=1,
             private_data_dir=str(CURRENT_PATH / "ansible/tmp"),
             playbook=str(CURRENT_PATH / "ansible/docker_list_playbook.yml"),
             inventory=str(self._inventory_path),
-            quiet=True
+            quiet=True,
         )
         return cast(Runner, runner)
 
@@ -120,16 +120,15 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
     def _parse_inventory_machine(self, name: str, inventory_machine: dict[str, Any]) -> InventoryMachine:
         return InventoryMachine(
             name=name,
-            ip=inventory_machine['ansible_host'],
-            username=SecretStr(inventory_machine['ansible_user']),
-            password=SecretStr(inventory_machine['ansible_password'])
+            ip=inventory_machine["ansible_host"],
+            username=SecretStr(inventory_machine["ansible_user"]),
+            password=SecretStr(inventory_machine["ansible_password"]),
         )
 
     @property
     def _inventory_machines(self) -> list[InventoryMachine]:
-        inventory_json = ansible_runner.get_inventory('list', [str(self._inventory_path)])[0]
-        inventory = json.loads(inventory_json)['_meta']['hostvars']
-        print(inventory)
+        inventory_json = ansible_runner.get_inventory("list", [str(self._inventory_path)])[0]
+        inventory = json.loads(inventory_json)["_meta"]["hostvars"]
         return [self._parse_inventory_machine(name, machine) for name, machine in inventory.items()]
 
     def list_docker_containers(self, host: str) -> list[DockerContainer]:
@@ -139,7 +138,7 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
             playbook=str(CURRENT_PATH / "ansible/docker_list_playbook.yml"),
             inventory=str(self._inventory_path),
             limit=host,
-            quiet=True
+            quiet=True,
         )
         runner = cast(Runner, runner)
         return self._parse_containers(host, runner)
@@ -151,10 +150,10 @@ class AnsibleInfrastructureCommunicator(InfrastructureCommunicator):
             rotate_artifacts=1,
             playbook=str(CURRENT_PATH / "ansible/gather_facts.yml"),
             inventory=str(self._inventory_path),
-            quiet=True
+            quiet=True,
         )
         runner = cast(Runner, runner)
-        
+
         for facts in self._gathered_facts(runner):
             machine = self._parse_machine(facts["res"]["ansible_facts"], [])
             if machine.ip not in [_machine.ip for _machine in fleet.machines]:

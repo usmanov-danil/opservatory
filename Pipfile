@@ -12,6 +12,7 @@ pytimeparse = "*"
 jinja2 = "*"
 kornet = "0.0.18"
 loguru = "*"
+bandit = "*"
 
 [dev-packages]
 wily = "*"

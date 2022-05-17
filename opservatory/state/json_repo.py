@@ -1,5 +1,7 @@
 from pathlib import Path
+
 from pydantic.error_wrappers import ValidationError
+
 from opservatory.models import Fleet
 from opservatory.state.repository import StateRepository
 
