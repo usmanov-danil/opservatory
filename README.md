@@ -1,3 +1,4 @@
+![](docs/brands/full_logo.svg)
 # Opservatory
 
 API for checking docker containers states in a small infrastructure
