@@ -8,14 +8,14 @@ import shutil
 
 from opservatory.app import update_containers_info, update_fleet_facts
 from opservatory.infrastructure.ansible import AnsibleInfrastructureCommunicator
-from opservatory.state.json_repo import JsonStateRepository
+from opservatory.state.adapters.json_repo import JsonStateRepository
 
 logger = logging.getLogger("main")
 sched = BackgroundScheduler()
 
-TEMP_FILES_PATH = Path(os.path.dirname(__file__)) / 'infrastructure' / 'ansible' / 'tmp'
+TEMP_FILES_PATH = Path(os.path.dirname(__file__)) / "infrastructure" / "ansible" / "tmp"
 PROJECT_PATH = Path(os.path.dirname(__file__))
-STATE_DUMP_PATH = PROJECT_PATH / 'volumes' / 'state.json'
+STATE_DUMP_PATH = PROJECT_PATH / "mounts" / "state.json"
 
 
 @sched.scheduled_job(id="facts_update", trigger=CronTrigger.from_crontab("*/10 * * * *"), next_run_time=datetime.now())  # type: ignore

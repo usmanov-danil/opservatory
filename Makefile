@@ -1,12 +1,12 @@
+dev: build
+	echo "Starting dev server..."
+	docker-compose -f docker-compose.dev.yml up;
+
 build:
 	echo "Building..."
 	cd opservatory/client; npm run build;
 	docker build -t opservatory .;
 	echo "Done!"
-
-dev: build
-	echo "Starting dev server..."
-	docker-compose -f docker-compose.dev.yml up;
 
 back-dev:
 	echo "Starting dev server..."
@@ -19,6 +19,3 @@ front-dev:
 release: build
 	docker tag opservatory $(tag)
 	docker push $(tag)
-
-
-

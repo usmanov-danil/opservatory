@@ -13,6 +13,9 @@ uvicorn = "*"
 ansible = "*"
 pytimeparse = "*"
 jinja2 = "*"
+pyyaml = "*"
+python-jose = {extras = ["cryptography"], version = "*"}
+passlib = "*"
 
 [dev-packages]
 wily = "*"

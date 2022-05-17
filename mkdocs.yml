@@ -1,0 +1,25 @@
+site_name: Opservatory
+
+nav:
+  - about.md
+  - index.md
+
+theme:
+  icon:
+    repo: fontawesome/brands/github
+  logo: brands/logo_bnw.png
+  favicon: brands/logo_bnw.png
+  name: material
+  palette:
+    primary: black
+
+repo_url: https://github.com/subatiq/opservatory
+repo_name: subatiq/opservatory 
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences 

@@ -1,0 +1,3 @@
+company_name: "Awesome Inc."
+auth:
+  secret_key: 53f9a51543e26e5039aa404980b3648dd3ed4cb83c0b25cc3301af0bdb66d90e
