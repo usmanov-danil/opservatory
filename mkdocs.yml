@@ -10,4 +10,5 @@ theme:
     repo: fontawesome/brands/github
   palette:
     scheme: slate
-    primary: deep orange
+    primary: black
+    accesnt: light blue

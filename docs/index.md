@@ -1,6 +1,6 @@
 # Opservatory
 
-![](brands/full_logo.svg)
+![](brands/full_logo_white.svg)
 
 
 A small deployable tool for opserving local fleet of machines and reserving them for staging/testing.

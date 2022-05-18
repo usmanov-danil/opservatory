@@ -1,4 +1,5 @@
-![](docs/brands/full_logo.svg)
+![](docs/brands/full_logo_white.svg#gh-dark-mode-only)
+![](docs/brands/full_logo_white.svg#gh-light-mode-only)
 
 API for checking docker containers states in a small infrastructure
 
