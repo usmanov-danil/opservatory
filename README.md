@@ -1,6 +1,13 @@
 ![](docs/brands/full_logo_white.svg#gh-dark-mode-only)
 ![](docs/brands/full_logo_white.svg#gh-light-mode-only)
 
+<p align="center">
+  <img src="https://img.shields.io/badge/python-3.9+-blue.svg" alt="Python Version">
+  <img alt="GitHub release (latest by date including pre-releases)" src="https://img.shields.io/github/v/release/subatiq/opservatory?include_prereleases">
+  <img src="https://img.shields.io/github/license/subatiq/opservatory.svg" alt="License">
+  <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
+</p>
+
 API for checking docker containers states in a small infrastructure
 
 ---
