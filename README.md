@@ -1,5 +1,5 @@
 ![](docs/brands/full_logo_white.svg#gh-dark-mode-only)
-![](docs/brands/full_logo_white.svg#gh-light-mode-only)
+![](docs/brands/full_logo_black.svg#gh-light-mode-only)
 
 <p align="center">
   <img src="https://img.shields.io/badge/python-3.9+-blue.svg" alt="Python Version">
