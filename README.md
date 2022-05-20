@@ -28,4 +28,4 @@ docker run -p 5000:5000 opservatory
 
 ---
 
-Made by [Subatiq](https://github.com/subatiq) for the team of Edge Vision
+Made by [Subatiq](https://github.com/subatiq) for the team of Edge Vision. Powered by [Kornet](https://subatiq.github.io/kornet/)
